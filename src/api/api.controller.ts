@@ -11,12 +11,12 @@ export class ApiController {
 
   @Get('clicks')
   async getAllClicks() {
-    return this.clicksService.getAll();
+    return this.clicksService.getAll({ userId });
   }
 
   @Get('destinations')
   async getAllDestinations() {
-    return this.destinationsService.getAll();
+    return this.destinationsService.getAll({ userId });
   }
 
   @Get(':slug')

@@ -33,7 +33,28 @@ export class ClicksService {
     });
   }
 
-  async getAll() {
-    return this.repository.getAll({});
+  async getAll(userId: number) {
+    return this.repository.getAll({
+      where: {
+        destination: {
+          owner: {
+            id: userId,
+          },
+        },
+      },
+      orderBy: {
+        destinationId: 'asc',
+        identifierId: 'asc',
+      },
+      include: {
+        identifier: true,
+        destination: {
+          select: {
+            name: true,
+            url: true,
+          },
+        },
+      },
+    });
   }
 }

@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { Click, Destination, Prisma } from '@prisma/client';
+import { Destination, Prisma } from '@prisma/client';
 import { PrismaService } from 'src/database/prisma.service';
 
 @Injectable()
 export class DestinationsRepository {
   constructor(private prisma: PrismaService) {}
 
-  async findOne(params: { where: { slug: string } }): Promise<Destination> {
+  async findOne(params: {
+    where: Prisma.DestinationWhereUniqueInput;
+  }): Promise<Destination> {
     const { where } = params;
     return this.prisma.destination.findUnique({
       where,
@@ -31,9 +33,10 @@ export class DestinationsRepository {
     });
   }
 
-  async create(params: { data: Prisma.ClickCreateInput }): Promise<Click> {
-    console.log({ prismaRepository: this.prisma });
+  async create(params: {
+    data: Prisma.DestinationCreateInput;
+  }): Promise<Destination> {
     const { data } = params;
-    return this.prisma.click.create({ data });
+    return this.prisma.destination.create({ data });
   }
 }

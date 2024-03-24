@@ -24,15 +24,25 @@ model Click {
 }
 
 model Destination {
-  id    Int     @id @default(autoincrement())
-  url   String
-  name  String  @unique
-  slug  String  @unique
-  Click Click[]
+  id     Int     @id @default(autoincrement())
+  url    String
+  name   String  @unique
+  slug   String  @unique
+  owner  User    @relation(fields: [userId], references: [id])
+  Click  Click[]
+  userId Int
 }
 
 model Identifier {
   id    Int     @id @default(autoincrement())
   name  String  @unique
   Click Click[]
+}
+
+model User {
+  id          Int           @id @default(autoincrement())
+  userName    String        @unique
+  email       String        @unique
+  password    String
+  Destination Destination[]
 }
