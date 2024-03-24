@@ -5,7 +5,7 @@ import { ClicksService } from './clicks.service';
 
 @Module({
   imports: [PrismaModule],
-  providers: [ClicksService, ClicksRepository],
+  providers: [ClicksRepository, ClicksService],
   exports: [ClicksService],
 })
 export class ClicksModule {}

@@ -1,9 +1,8 @@
 import { Module } from '@nestjs/common';
-import { ClicksModule } from './modules/clicks/clicks.module';
 import { ApiModule } from './api/api.module';
 
 @Module({
-  imports: [ClicksModule, ApiModule],
+  imports: [ApiModule],
   controllers: [],
   providers: [],
 })

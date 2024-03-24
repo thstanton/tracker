@@ -2,13 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { Click, Prisma } from '@prisma/client';
 import { PrismaService } from 'src/database/prisma.service';
 
-Injectable();
+@Injectable()
 export class ClicksRepository {
   constructor(private prisma: PrismaService) {}
 
   async create(params: { data: Prisma.ClickCreateInput }): Promise<Click> {
     const { data } = params;
-    console.log(data);
     return this.prisma.click.create({ data });
   }
 

@@ -9,7 +9,16 @@ export class ApiController {
     private readonly destinationsService: DestinationsService,
   ) {}
 
-  // Fetch the destination using the slug parameter, log the click, and redirect to the destination.
+  @Get('clicks')
+  async getAllClicks() {
+    return this.clicksService.getAll();
+  }
+
+  @Get('destinations')
+  async getAllDestinations() {
+    return this.destinationsService.getAll();
+  }
+
   @Get(':slug')
   @Redirect()
   async click(
@@ -18,11 +27,12 @@ export class ApiController {
     @Ip() ipAddress: string,
   ) {
     const destination = await this.destinationsService.findOne({ slug });
-    await this.clicksService.create({
+    const click = await this.clicksService.create({
       ipAddress,
       destination: destination.slug,
       identifier,
     });
+    console.log({ click });
     return { url: destination.url };
   }
 }
