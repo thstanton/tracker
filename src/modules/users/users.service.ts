@@ -18,15 +18,15 @@ export class UsersService {
 
   async create(params: {
     email: string;
-    userName: string;
+    username: string;
     password: string;
   }): Promise<User> {
-    const { email, userName, password } = params;
+    const { email, username, password } = params;
     const hashedPassword = await this.bcrypt.hash(password);
     return this.repository.create({
       data: {
         email,
-        userName,
+        username,
         password: hashedPassword,
       },
     });
@@ -34,14 +34,14 @@ export class UsersService {
 
   async update(params: {
     email: string;
-    userName?: string;
+    username?: string;
     newEmail?: string;
   }): Promise<User> {
-    const { email, userName, newEmail } = params;
+    const { email, username, newEmail } = params;
     return this.repository.update({
       where: { email },
       data: {
-        userName,
+        username,
         email: newEmail,
       },
     });

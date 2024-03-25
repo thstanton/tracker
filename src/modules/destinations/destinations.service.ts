@@ -1,14 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { DestinationsRepository } from './destinations.respository';
+import { DestinationsRepository } from './destinations.repository';
 import { Destination } from '@prisma/client';
 
 @Injectable()
 export class DestinationsService {
   constructor(private repository: DestinationsRepository) {}
 
-  async findOne(params: { slug: Destination['slug'] }) {
-    const { slug } = params;
-    const destination = await this.repository.findOne({ where: { slug } });
+  async findOne(params: {
+    slug: Destination['slug'];
+    userId: Destination['userId'];
+  }) {
+    const { slug, userId } = params;
+    const destination = await this.repository.findOne({
+      where: { owner: { id: userId }, slug },
+    });
     return destination;
   }
 
