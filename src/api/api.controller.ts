@@ -8,10 +8,11 @@ import {
   Post,
   UseGuards,
   Request,
+  Body,
 } from '@nestjs/common';
 import { AuthService } from 'src/auth/auth.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { LocalAuthGuard } from 'src/auth/local-auth.guard';
+import { GuardedRequest, LocalAuthGuard } from 'src/auth/local-auth.guard';
 import { ClicksService } from 'src/modules/clicks/clicks.service';
 import { DestinationsService } from 'src/modules/destinations/destinations.service';
 
@@ -25,30 +26,42 @@ export class ApiController {
 
   @UseGuards(LocalAuthGuard)
   @Post('auth/login')
-  async login(@Request() req) {
+  async login(@Request() req: GuardedRequest) {
     return this.authService.login(req.user);
   }
 
   @Post('auth/register')
-  async register(@Request() req) {
+  async register(@Request() req: GuardedRequest) {
     return this.authService.register(req.body);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('destinations')
-  async getAllDestinations(@Request() req) {
+  async getAllDestinations(@Request() req: GuardedRequest) {
     const { userId } = req.user;
     return this.destinationsService.getAll({ userId });
   }
 
-  // @Post('destinations')
-  // async createDestination() {
-  //   return this.destinationsService.create({
-  //     url,
-  //     slug,
-  //     name,
-  //   });
-  // }
+  @UseGuards(JwtAuthGuard)
+  @Post('destinations')
+  async createDestination(
+    @Request() req: GuardedRequest,
+    @Body()
+    body: {
+      url: string;
+      name: string;
+      slug: string;
+    },
+  ) {
+    const { userId }: { userId: number } = req.user;
+    const { url, name, slug } = body;
+    return this.destinationsService.create({
+      url,
+      slug,
+      name,
+      userId,
+    });
+  }
 
   @Get('link/:userId/:slug')
   @Redirect()

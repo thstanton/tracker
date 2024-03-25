@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { UsersRepository } from './users.repository';
 import { User } from '@prisma/client';
-import { BcryptService } from 'src/modules/bcrypt/bcrypt.service';
+import { BcryptService } from 'src/auth/bcrypt/bcrypt.service';
 
 @Injectable()
 export class UsersService {
@@ -10,10 +10,14 @@ export class UsersService {
     private bcrypt: BcryptService,
   ) {}
 
-  async findOne(params: { email: string }): Promise<User> {
-    return this.repository.findOne({
-      where: { email: params.email },
+  async findOne(params: { username: string }): Promise<User> {
+    const { username } = params;
+    console.log('Find One User: ' + username);
+    const user = await this.repository.findOne({
+      where: { username },
     });
+    console.log('User: ' + user.id, user.email, user.password);
+    return user;
   }
 
   async create(params: {

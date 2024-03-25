@@ -6,8 +6,9 @@ import { PrismaService } from 'src/database/prisma.service';
 export class UsersRepository {
   constructor(private prisma: PrismaService) {}
 
-  async findOne(params: { where: { email: string } }): Promise<User> {
-    return this.prisma.user.findFirst(params);
+  async findOne(params: { where: Prisma.UserWhereUniqueInput }): Promise<User> {
+    const { where } = params;
+    return this.prisma.user.findFirst({ where });
   }
 
   async create(params: { data: Prisma.UserCreateInput }): Promise<User> {
