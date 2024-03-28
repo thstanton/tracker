@@ -17,8 +17,8 @@ model Click {
   id            Int         @id @default(autoincrement())
   createdAt     DateTime    @default(now())
   ipAddress     String
-  identifier    Identifier  @relation(fields: [identifierId], references: [id])
-  identifierId  Int
+  identifier    Identifier?  @relation(fields: [identifierId], references: [id])
+  identifierId  Int?
   destination   Destination @relation(fields: [destinationId], references: [id])
   destinationId Int
 }

@@ -12,14 +12,9 @@ export class ClicksRepository {
     return this.prisma.click.create({ data });
   }
 
-  async getAll(params: {
-    skip?: number;
-    take?: number;
-    cursor?: Prisma.ClickWhereUniqueInput;
-    where?: Prisma.ClickWhereInput;
-    orderBy?: Prisma.ClickOrderByWithRelationInput;
-    include?: Prisma.ClickInclude;
-  }): Promise<ClickWithRelations[]> {
+  async getAll(
+    params: Prisma.ClickFindManyArgs,
+  ): Promise<ClickWithRelations[]> {
     const { skip, take, cursor, where, orderBy, include } = params;
     return this.prisma.click.findMany({
       skip,

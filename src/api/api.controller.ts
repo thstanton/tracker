@@ -9,12 +9,16 @@ import {
   UseGuards,
   Request,
   Body,
+  ParseIntPipe,
+  Delete,
+  Put,
 } from '@nestjs/common';
 import { AuthService } from 'src/auth/auth.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { GuardedRequest, LocalAuthGuard } from 'src/auth/local-auth.guard';
 import { ClicksService } from 'src/modules/clicks/clicks.service';
 import { DestinationsService } from 'src/modules/destinations/destinations.service';
+import { IdentifiersService } from 'src/modules/identifiers/identifiers.service';
 
 @Controller('api')
 export class ApiController {
@@ -22,6 +26,7 @@ export class ApiController {
     private readonly clicksService: ClicksService,
     private readonly destinationsService: DestinationsService,
     private readonly authService: AuthService,
+    private readonly identifiersService: IdentifiersService,
   ) {}
 
   @UseGuards(LocalAuthGuard)
@@ -40,6 +45,16 @@ export class ApiController {
   async getAllDestinations(@Request() req: GuardedRequest) {
     const { userId } = req.user;
     return this.destinationsService.getAll({ userId });
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('destinations/:id')
+  async getDestination(
+    @Param('id', ParseIntPipe) id: number,
+    @Request() req: GuardedRequest,
+  ) {
+    const { userId } = req.user;
+    return this.destinationsService.findOneById({ id, userId });
   }
 
   @UseGuards(JwtAuthGuard)
@@ -63,13 +78,34 @@ export class ApiController {
     });
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Delete('destinations/:id')
+  async deleteDestination(@Param('id', ParseIntPipe) id: number) {
+    return this.destinationsService.delete({ id });
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put('destinations/:id')
+  async updateDestination(
+    @Param('id', ParseIntPipe) id: number,
+    @Body()
+    body: {
+      url: string;
+      name: string;
+      slug: string;
+    },
+  ) {
+    const { url, name, slug } = body;
+    return this.destinationsService.update({ id, url, name, slug });
+  }
+
   @Get('link/:userId/:slug')
   @Redirect()
   async click(
     @Param('slug') slug: string,
-    @Param('userId') userId: number,
-    @Query('identifier') identifier: string,
+    @Param('userId', ParseIntPipe) userId: number,
     @Ip() ipAddress: string,
+    @Query('id') identifier?: string,
   ) {
     const destination = await this.destinationsService.findOne({
       slug,
@@ -85,5 +121,26 @@ export class ApiController {
     });
     console.log({ click });
     return { url: destination.url };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('clicks')
+  async getClicks(@Request() req: GuardedRequest) {
+    const { userId }: { userId: number } = req.user;
+    return this.clicksService.getAll({ userId });
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('clicks/chart')
+  async getChartData(@Request() req: GuardedRequest) {
+    const { userId }: { userId: number } = req.user;
+    return this.clicksService.getChartData({ userId });
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('identifiers')
+  async getIdentifiers(@Request() req: GuardedRequest) {
+    const { userId }: { userId: number } = req.user;
+    return this.identifiersService.getAll({ userId });
   }
 }

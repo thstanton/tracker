@@ -21,15 +21,16 @@ export class DestinationsRepository {
     cursor?: Prisma.DestinationWhereUniqueInput;
     where?: Prisma.DestinationWhereInput;
     orderBy?: Prisma.DestinationOrderByWithRelationInput;
-  }): Promise<Destination[]> {
-    const { skip, take, cursor, where, orderBy } = params;
-    console.log(this.prisma);
+    include?: Prisma.DestinationInclude;
+  }) {
+    const { skip, take, cursor, where, orderBy, include } = params;
     return this.prisma.destination.findMany({
       skip,
       take,
       cursor,
       where,
       orderBy,
+      include,
     });
   }
 
@@ -38,5 +39,25 @@ export class DestinationsRepository {
   }): Promise<Destination> {
     const { data } = params;
     return this.prisma.destination.create({ data });
+  }
+
+  async delete(params: {
+    where: Prisma.DestinationWhereUniqueInput;
+  }): Promise<Destination> {
+    const { where } = params;
+    return this.prisma.destination.delete({
+      where,
+    });
+  }
+
+  async update(params: {
+    where: Prisma.DestinationWhereUniqueInput;
+    data: Prisma.DestinationUpdateInput;
+  }): Promise<Destination> {
+    const { where, data } = params;
+    return this.prisma.destination.update({
+      where,
+      data,
+    });
   }
 }
