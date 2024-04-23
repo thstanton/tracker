@@ -1,10 +1,7 @@
 import {
   Controller,
-  Ip,
   Param,
   Get,
-  Query,
-  Redirect,
   Post,
   UseGuards,
   Request,
@@ -97,30 +94,6 @@ export class ApiController {
   ) {
     const { url, name, slug } = body;
     return this.destinationsService.update({ id, url, name, slug });
-  }
-
-  @Get('link/:userId/:slug')
-  @Redirect()
-  async click(
-    @Param('slug') slug: string,
-    @Param('userId', ParseIntPipe) userId: number,
-    @Ip() ipAddress: string,
-    @Query('id') identifier?: string,
-  ) {
-    const destination = await this.destinationsService.findOne({
-      slug,
-      userId,
-    });
-    if (!destination) {
-      throw new Error('404: Destination not found');
-    }
-    const click = await this.clicksService.create({
-      ipAddress,
-      destination: destination.slug,
-      identifier,
-    });
-    console.log({ click });
-    return { url: destination.url };
   }
 
   @UseGuards(JwtAuthGuard)
