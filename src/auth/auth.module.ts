@@ -1,23 +1,31 @@
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UsersModule } from 'src/users/users.module';
-import { BcryptModule } from 'src/auth/bcrypt/bcrypt.module';
 import { PassportModule } from '@nestjs/passport';
-import { LocalStrategy } from './local.strategy';
+import { LocalStrategy } from './passport/local.strategy';
 import { JwtModule } from '@nestjs/jwt';
-import { JwtStrategy } from './jwt.strategy';
+import { JwtStrategy } from './passport/jwt.strategy';
+import { MagicLinkStrategy } from './passport/magic-link.strategy';
+import { ResendService } from './resend/resend.service';
+import { BcryptModule } from './bcrypt/bcrypt.module';
 
 @Module({
   imports: [
     UsersModule,
-    BcryptModule,
     PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '1d' },
     }),
+    BcryptModule,
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
-  exports: [AuthService],
+  providers: [
+    AuthService,
+    LocalStrategy,
+    JwtStrategy,
+    MagicLinkStrategy,
+    ResendService,
+  ],
+  exports: [AuthService, MagicLinkStrategy],
 })
 export class AuthModule {}

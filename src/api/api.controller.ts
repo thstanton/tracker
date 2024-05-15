@@ -9,10 +9,16 @@ import {
   ParseIntPipe,
   Delete,
   Put,
+  Req,
+  Res,
 } from '@nestjs/common';
 import { AuthService } from 'src/auth/auth.service';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { GuardedRequest, LocalAuthGuard } from 'src/auth/local-auth.guard';
+import { JwtAuthGuard } from 'src/auth/passport/jwt-auth.guard';
+import {
+  GuardedRequest,
+  LocalAuthGuard,
+} from 'src/auth/passport/local-auth.guard';
+import { MagicLinkStrategy } from 'src/auth/passport/magic-link.strategy';
 import { ClicksService } from 'src/modules/clicks/clicks.service';
 import { DestinationsService } from 'src/modules/destinations/destinations.service';
 import { IdentifiersService } from 'src/modules/identifiers/identifiers.service';
@@ -24,12 +30,26 @@ export class ApiController {
     private readonly destinationsService: DestinationsService,
     private readonly authService: AuthService,
     private readonly identifiersService: IdentifiersService,
+    private readonly magicLinkStrategy: MagicLinkStrategy,
   ) {}
 
   @UseGuards(LocalAuthGuard)
   @Post('auth/login')
   async login(@Request() req: GuardedRequest) {
     return this.authService.login(req.user);
+  }
+
+  @Post('auth/magic-link')
+  async sendLoginLink(
+    @Req() req,
+    @Res() res,
+    @Body() body: { destination: string },
+  ) {
+    const user = this.authService.validateUserByMagicLink(body.destination);
+    if (!user) {
+      return res.status(401).send();
+    }
+    return this.magicLinkStrategy.send(req, res);
   }
 
   @Post('auth/register')

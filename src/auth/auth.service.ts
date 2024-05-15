@@ -11,36 +11,43 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(username: string, password: string): Promise<any> {
-    const user = await this.usersService.findOne({ username });
+  async validateUser(email: string, password: string): Promise<any> {
+    const user = await this.usersService.findOne({ email });
     if (user && (await this.bcrypt.compare(password, user.password))) {
-      const result = { ...user };
-      delete result.password;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { password, ...result } = user;
+      return result;
+    }
+    return null;
+  }
+
+  async validateUserByMagicLink(email: string): Promise<any> {
+    const user = await this.usersService.findOne({ email });
+    if (user) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { password, ...result } = user;
       return result;
     }
     return null;
   }
 
   async login(user: {
-    username: string;
+    email: string;
     id: number;
-  }): Promise<{ access_token: string; userId: number }> {
-    const payload = { username: user.username, sub: user.id };
+  }): Promise<{ access_token: string }> {
+    const payload = { email: user.email, sub: user.id };
     return {
       access_token: this.jwtService.sign(payload),
-      userId: user.id,
     };
   }
 
   async register(user: {
     email: string;
-    username: string;
     password: string;
   }): Promise<{ access_token: string }> {
-    const { email, username, password } = user;
+    const { email, password } = user;
     const createdUser = await this.usersService.create({
       email,
-      username,
       password,
     });
 

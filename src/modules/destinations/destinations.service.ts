@@ -1,14 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { DestinationsRepository } from './destinations.repository';
 import { Destination } from '@prisma/client';
-import { BcryptService } from 'src/auth/bcrypt/bcrypt.service';
 
 @Injectable()
 export class DestinationsService {
-  constructor(
-    private repository: DestinationsRepository,
-    private bcrypt: BcryptService,
-  ) {}
+  constructor(private repository: DestinationsRepository) {}
 
   async findOne(params: { slug: Destination['slug'] }) {
     const { slug } = params;

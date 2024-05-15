@@ -10,43 +10,54 @@ export class UsersService {
     private bcrypt: BcryptService,
   ) {}
 
-  async findOne(params: { username: string }): Promise<User> {
-    const { username } = params;
-    console.log('Find One User: ' + username);
+  async findOne(params: { email: string }): Promise<User> {
+    const { email } = params;
+    console.log('Find One User: ' + email);
     const user = await this.repository.findOne({
-      where: { username },
+      where: { email },
     });
     console.log('User: ' + user.id, user.email, user.password);
     return user;
   }
 
-  async create(params: {
-    email: string;
-    username: string;
-    password: string;
-  }): Promise<User> {
-    const { email, username, password } = params;
+  async create(params: { email: string; password: string }): Promise<User> {
+    const { email, password } = params;
     const hashedPassword = await this.bcrypt.hash(password);
     return this.repository.create({
       data: {
         email,
-        username,
         password: hashedPassword,
       },
     });
   }
 
-  async update(params: {
-    email: string;
-    username?: string;
-    newEmail?: string;
-  }): Promise<User> {
-    const { email, username, newEmail } = params;
+  async update(params: { email: string; newEmail?: string }): Promise<User> {
+    const { email, newEmail } = params;
     return this.repository.update({
       where: { email },
       data: {
-        username,
         email: newEmail,
+      },
+    });
+  }
+
+  async updatePassword(params: {
+    email: string;
+    oldPassword: string;
+    newPassword: string;
+  }): Promise<User> {
+    const { email, oldPassword, newPassword } = params;
+    const user = await this.repository.findOne({
+      where: { email },
+    });
+    if (!(await this.bcrypt.compare(oldPassword, user.password))) {
+      throw new Error('Incorrect password');
+    }
+    const hashedPassword = await this.bcrypt.hash(newPassword);
+    return this.repository.update({
+      where: { email },
+      data: {
+        password: hashedPassword,
       },
     });
   }
