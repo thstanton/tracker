@@ -13,7 +13,7 @@ model Click {
   ipAddress     String
   identifier    Identifier? @relation(fields: [identifierId], references: [id])
   identifierId  Int?
-  destination   Destination @relation(fields: [destinationId], references: [id])
+  destination   Destination @relation(fields: [destinationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   destinationId Int
 }
 
@@ -22,7 +22,7 @@ model Destination {
   url    String
   name   String
   slug   String  @unique
-  owner  User    @relation(fields: [userId], references: [id])
+  owner  User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   clicks Click[]
   userId Int
 }

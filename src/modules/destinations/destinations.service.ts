@@ -10,13 +10,10 @@ export class DestinationsService {
     private bcrypt: BcryptService,
   ) {}
 
-  async findOne(params: {
-    slug: Destination['slug'];
-    userId: Destination['userId'];
-  }) {
-    const { slug, userId } = params;
+  async findOne(params: { slug: Destination['slug'] }) {
+    const { slug } = params;
     const destination = await this.repository.findOne({
-      where: { owner: { id: userId }, slug },
+      where: { slug },
     });
     return destination;
   }
@@ -51,7 +48,12 @@ export class DestinationsService {
     name: Destination['name'];
   }) {
     const { url, userId, name } = params;
-    const slug = await this.bcrypt.hash(url);
+
+    // Generate a slug (timestamp + random number in base36)
+    const timestamp = Date.now().toString(36);
+    const random = Math.floor(Math.random() * 1000).toString(36);
+    const slug = timestamp + random;
+
     return this.repository.create({
       data: {
         url,

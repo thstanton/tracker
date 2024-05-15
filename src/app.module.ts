@@ -4,7 +4,9 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { BcryptModule } from './auth/bcrypt/bcrypt.module';
 import { IdentifiersModule } from './modules/identifiers/identifiers.module';
-import { LinkModule } from './link/link.module';
+import { AppController } from './app.controller';
+import { ClicksModule } from './modules/clicks/clicks.module';
+import { DestinationsModule } from './modules/destinations/destinations.module';
 
 @Module({
   imports: [
@@ -13,9 +15,10 @@ import { LinkModule } from './link/link.module';
     UsersModule,
     BcryptModule,
     IdentifiersModule,
-    LinkModule,
+    ClicksModule,
+    DestinationsModule,
   ],
-  controllers: [],
+  controllers: [AppController],
   providers: [],
 })
 export class AppModule {}
