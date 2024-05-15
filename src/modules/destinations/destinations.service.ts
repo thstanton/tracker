@@ -1,10 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { DestinationsRepository } from './destinations.repository';
 import { Destination } from '@prisma/client';
+import { BcryptService } from 'src/auth/bcrypt/bcrypt.service';
 
 @Injectable()
 export class DestinationsService {
-  constructor(private repository: DestinationsRepository) {}
+  constructor(
+    private repository: DestinationsRepository,
+    private bcrypt: BcryptService,
+  ) {}
 
   async findOne(params: {
     slug: Destination['slug'];
@@ -44,10 +48,10 @@ export class DestinationsService {
   async create(params: {
     url: Destination['url'];
     userId: Destination['userId'];
-    slug: Destination['slug'];
     name: Destination['name'];
   }) {
-    const { url, userId, slug, name } = params;
+    const { url, userId, name } = params;
+    const slug = await this.bcrypt.hash(url);
     return this.repository.create({
       data: {
         url,

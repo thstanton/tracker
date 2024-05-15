@@ -62,14 +62,12 @@ export class ApiController {
     body: {
       url: string;
       name: string;
-      slug: string;
     },
   ) {
     const { userId }: { userId: number } = req.user;
-    const { url, name, slug } = body;
+    const { url, name } = body;
     return this.destinationsService.create({
       url,
-      slug,
       name,
       userId,
     });
