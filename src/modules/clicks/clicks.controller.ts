@@ -1,6 +1,7 @@
-import { Controller, Get, Ip, Param, Query, Redirect } from '@nestjs/common';
+import { Controller, Get, Param, Query, Redirect } from '@nestjs/common';
 import { ClicksService } from './clicks.service';
 import { DestinationsService } from '../destinations/destinations.service';
+import { RealIP } from 'nestjs-real-ip';
 
 @Controller()
 export class ClicksController {
@@ -13,12 +14,13 @@ export class ClicksController {
   @Redirect()
   async click(
     @Param('slug') slug: string,
-    @Ip() ipAddress: string,
+    @RealIP() ipAddress: string,
     @Query('id') identifier?: string,
   ) {
     const destination = await this.destinationsService.findOne({
       slug,
     });
+    console.log(ipAddress);
     if (!destination) {
       throw new Error('404: Destination not found');
     }

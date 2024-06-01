@@ -6,6 +6,7 @@ import {
   Redirect,
   Req,
   Res,
+  UseFilters,
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
@@ -15,6 +16,7 @@ import { MagicLinkStrategy } from './passport/magic-link.strategy';
 import { Request, Response } from 'express';
 import { MagicLinkDto } from './magic-link.dto';
 import { MagicLinkAuthGuard } from './passport/magic-link-auth.guard';
+import { MagicLinkExceptionFilter } from './magic-link-exception.filter';
 
 @Controller('auth')
 export class AuthController {
@@ -44,6 +46,7 @@ export class AuthController {
 
   @UseGuards(MagicLinkAuthGuard)
   @Get('magic-link/callback')
+  @UseFilters(MagicLinkExceptionFilter)
   @Redirect()
   async loginWithMagicLink(@Req() req: GuardedRequest) {
     const { user } = req;
