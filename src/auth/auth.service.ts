@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { BcryptService } from 'src/auth/bcrypt/bcrypt.service';
 import { UsersService } from 'src/users/users.service';
@@ -11,7 +11,10 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(email: string, password: string): Promise<any> {
+  async validateUserWithPassword(
+    email: string,
+    password: string,
+  ): Promise<any> {
     const user = await this.usersService.findOne({ email });
     if (user && (await this.bcrypt.compare(password, user.password))) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -21,14 +24,14 @@ export class AuthService {
     return null;
   }
 
-  async validateUserByMagicLink(email: string): Promise<any> {
+  async validateUserWithMagicLink(email: string) {
     const user = await this.usersService.findOne({ email });
-    if (user) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password, ...result } = user;
-      return result;
+    if (!user) {
+      throw new UnauthorizedException();
     }
-    return null;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...result } = user;
+    return result;
   }
 
   async login(user: {

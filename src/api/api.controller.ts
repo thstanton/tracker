@@ -4,21 +4,15 @@ import {
   Get,
   Post,
   UseGuards,
-  Request,
   Body,
   ParseIntPipe,
   Delete,
   Put,
   Req,
-  Res,
 } from '@nestjs/common';
 import { AuthService } from 'src/auth/auth.service';
 import { JwtAuthGuard } from 'src/auth/passport/jwt-auth.guard';
-import {
-  GuardedRequest,
-  LocalAuthGuard,
-} from 'src/auth/passport/local-auth.guard';
-import { MagicLinkStrategy } from 'src/auth/passport/magic-link.strategy';
+import { GuardedRequest } from 'src/auth/passport/local-auth.guard';
 import { ClicksService } from 'src/modules/clicks/clicks.service';
 import { DestinationsService } from 'src/modules/destinations/destinations.service';
 import { IdentifiersService } from 'src/modules/identifiers/identifiers.service';
@@ -30,36 +24,11 @@ export class ApiController {
     private readonly destinationsService: DestinationsService,
     private readonly authService: AuthService,
     private readonly identifiersService: IdentifiersService,
-    private readonly magicLinkStrategy: MagicLinkStrategy,
   ) {}
-
-  @UseGuards(LocalAuthGuard)
-  @Post('auth/login')
-  async login(@Request() req: GuardedRequest) {
-    return this.authService.login(req.user);
-  }
-
-  @Post('auth/magic-link')
-  async sendLoginLink(
-    @Req() req,
-    @Res() res,
-    @Body() body: { destination: string },
-  ) {
-    const user = this.authService.validateUserByMagicLink(body.destination);
-    if (!user) {
-      return res.status(401).send();
-    }
-    return this.magicLinkStrategy.send(req, res);
-  }
-
-  @Post('auth/register')
-  async register(@Request() req: GuardedRequest) {
-    return this.authService.register(req.body);
-  }
 
   @UseGuards(JwtAuthGuard)
   @Get('destinations')
-  async getAllDestinations(@Request() req: GuardedRequest) {
+  async getAllDestinations(@Req() req: GuardedRequest) {
     const { userId } = req.user;
     return this.destinationsService.getAll({ userId });
   }
@@ -68,7 +37,7 @@ export class ApiController {
   @Get('destinations/:id')
   async getDestination(
     @Param('id', ParseIntPipe) id: number,
-    @Request() req: GuardedRequest,
+    @Req() req: GuardedRequest,
   ) {
     const { userId } = req.user;
     return this.destinationsService.findOneById({ id, userId });
@@ -77,7 +46,7 @@ export class ApiController {
   @UseGuards(JwtAuthGuard)
   @Post('destinations')
   async createDestination(
-    @Request() req: GuardedRequest,
+    @Req() req: GuardedRequest,
     @Body()
     body: {
       url: string;
@@ -116,21 +85,21 @@ export class ApiController {
 
   @UseGuards(JwtAuthGuard)
   @Get('clicks')
-  async getClicks(@Request() req: GuardedRequest) {
+  async getClicks(@Req() req: GuardedRequest) {
     const { userId }: { userId: number } = req.user;
     return this.clicksService.getAll({ userId });
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('clicks/chart')
-  async getChartData(@Request() req: GuardedRequest) {
+  async getChartData(@Req() req: GuardedRequest) {
     const { userId }: { userId: number } = req.user;
     return this.clicksService.getChartData({ userId });
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('identifiers')
-  async getIdentifiers(@Request() req: GuardedRequest) {
+  async getIdentifiers(@Req() req: GuardedRequest) {
     const { userId }: { userId: number } = req.user;
     return this.identifiersService.getAll({ userId });
   }

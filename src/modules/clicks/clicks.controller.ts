@@ -1,9 +1,9 @@
 import { Controller, Get, Ip, Param, Query, Redirect } from '@nestjs/common';
-import { ClicksService } from './modules/clicks/clicks.service';
-import { DestinationsService } from './modules/destinations/destinations.service';
+import { ClicksService } from './clicks.service';
+import { DestinationsService } from '../destinations/destinations.service';
 
 @Controller()
-export class AppController {
+export class ClicksController {
   constructor(
     private readonly clicksService: ClicksService,
     private readonly destinationsService: DestinationsService,

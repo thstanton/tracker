@@ -8,6 +8,7 @@ import { JwtStrategy } from './passport/jwt.strategy';
 import { MagicLinkStrategy } from './passport/magic-link.strategy';
 import { ResendService } from './resend/resend.service';
 import { BcryptModule } from './bcrypt/bcrypt.module';
+import { AuthController } from './auth.controller';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { BcryptModule } from './bcrypt/bcrypt.module';
     MagicLinkStrategy,
     ResendService,
   ],
-  exports: [AuthService, MagicLinkStrategy],
+  controllers: [AuthController],
+  exports: [AuthService],
 })
 export class AuthModule {}
