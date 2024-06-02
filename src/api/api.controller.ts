@@ -103,7 +103,7 @@ export class ApiController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Put('clicks/read/true')
+  @Put('clicks/unread/mark-as-read')
   async markAsRead(@Req() req: GuardedRequest) {
     const { userId }: { userId: number } = req.user;
     return this.clicksService.markAsRead({ userId });
