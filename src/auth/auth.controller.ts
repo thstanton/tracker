@@ -51,6 +51,7 @@ export class AuthController {
   async loginWithMagicLink(@Req() req: GuardedRequest) {
     const { user } = req;
     const token = await this.authService.login(user);
+    console.log(token);
     return { url: `${process.env.FRONTEND_URL}?token=${token.access_token}` };
   }
 

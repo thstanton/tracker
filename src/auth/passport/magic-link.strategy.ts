@@ -20,10 +20,13 @@ export class MagicLinkStrategy extends PassportStrategy(Strategy) {
       sendMagicLink: async (destination: string, href: string) => {
         console.log('Sending magic link to: ' + destination);
         await this.resend.emails.send({
-          from: 'onboarding@resend.dev',
+          from: process.env.RESEND_FROM_EMAIL,
           to: destination,
-          subject: 'Log into Cliki.in',
-          html: `<a href="${href}">Click here to login</a>`,
+          subject: 'Magic Link: Log into Cliki.in',
+          html: `
+            <p>Click the link below to log in to your Cliki account.</p>
+            <p><a href="${href}">Click here to login</a><p>
+          `,
         });
       },
 

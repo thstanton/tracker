@@ -10,7 +10,6 @@ import {
   Put,
   Req,
 } from '@nestjs/common';
-import { AuthService } from 'src/auth/auth.service';
 import { JwtAuthGuard } from 'src/auth/passport/jwt-auth.guard';
 import { GuardedRequest } from 'src/auth/passport/local-auth.guard';
 import { ClicksService } from 'src/modules/clicks/clicks.service';
@@ -22,7 +21,6 @@ export class ApiController {
   constructor(
     private readonly clicksService: ClicksService,
     private readonly destinationsService: DestinationsService,
-    private readonly authService: AuthService,
     private readonly identifiersService: IdentifiersService,
   ) {}
 
@@ -95,6 +93,20 @@ export class ApiController {
   async getChartData(@Req() req: GuardedRequest) {
     const { userId }: { userId: number } = req.user;
     return this.clicksService.getChartData({ userId });
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('clicks/unread')
+  async getUnreadCount(@Req() req: GuardedRequest) {
+    const { userId }: { userId: number } = req.user;
+    return this.clicksService.getUnreadCount({ userId });
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put('clicks/read/true')
+  async markAsRead(@Req() req: GuardedRequest) {
+    const { userId }: { userId: number } = req.user;
+    return this.clicksService.markAsRead({ userId });
   }
 
   @UseGuards(JwtAuthGuard)

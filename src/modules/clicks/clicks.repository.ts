@@ -25,4 +25,14 @@ export class ClicksRepository {
       include,
     });
   }
+
+  async count(params: Prisma.ClickCountArgs) {
+    const { where } = params;
+    return this.prisma.click.count({ where });
+  }
+
+  async updateMany(params: Prisma.ClickUpdateManyArgs) {
+    const { where, data } = params;
+    return this.prisma.click.updateMany({ where, data });
+  }
 }

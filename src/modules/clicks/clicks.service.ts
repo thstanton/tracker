@@ -92,4 +92,35 @@ export class ClicksService {
     }
     return data;
   }
+
+  async getUnreadCount(params: { userId: number }) {
+    const { userId } = params;
+    return this.repository.count({
+      where: {
+        destination: {
+          owner: {
+            id: userId,
+          },
+        },
+        isRead: false,
+      },
+    });
+  }
+
+  async markAsRead(params: { userId: number }) {
+    const { userId } = params;
+    return this.repository.updateMany({
+      where: {
+        destination: {
+          owner: {
+            id: userId,
+          },
+        },
+        isRead: false,
+      },
+      data: {
+        isRead: true,
+      },
+    });
+  }
 }
