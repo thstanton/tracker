@@ -9,7 +9,6 @@ export class ClicksController {
     private readonly clicksService: ClicksService,
     private readonly destinationsService: DestinationsService,
   ) {}
-
   @Get(':slug')
   @Redirect()
   async click(
