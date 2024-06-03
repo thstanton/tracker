@@ -10,8 +10,8 @@ import {
   Put,
   Req,
 } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/auth/passport/jwt-auth.guard';
-import { GuardedRequest } from 'src/auth/passport/local-auth.guard';
+import { JwtAuthGuard } from 'src/auth/jwt/jwt-auth.guard';
+import { GuardedRequest } from 'src/auth/local/local-auth.guard';
 import { ClicksService } from 'src/modules/clicks/clicks.service';
 import { DestinationsService } from 'src/modules/destinations/destinations.service';
 import { IdentifiersService } from 'src/modules/identifiers/identifiers.service';

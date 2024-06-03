@@ -10,13 +10,13 @@ import {
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
-import { LocalAuthGuard, GuardedRequest } from './passport/local-auth.guard';
+import { LocalAuthGuard, GuardedRequest } from './local/local-auth.guard';
 import { AuthService } from './auth.service';
-import { MagicLinkStrategy } from './passport/magic-link.strategy';
+import { MagicLinkStrategy } from './magic-link/magic-link.strategy';
 import { Request, Response } from 'express';
-import { MagicLinkDto } from './magic-link.dto';
-import { MagicLinkAuthGuard } from './passport/magic-link-auth.guard';
-import { MagicLinkExceptionFilter } from './magic-link-exception.filter';
+import { MagicLinkDto } from './magic-link/magic-link.dto';
+import { MagicLinkAuthGuard } from './magic-link/magic-link-auth.guard';
+import { MagicLinkExceptionFilter } from './magic-link/magic-link-exception.filter';
 
 @Controller('auth')
 export class AuthController {
