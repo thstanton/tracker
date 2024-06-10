@@ -62,35 +62,37 @@ export class ClicksService {
     });
   }
 
-  async getChartData(params: { userId: number }) {
-    const { userId } = params;
-    const clicks = await this.repository.getAll({
-      where: {
-        destination: {
-          owner: {
-            id: userId,
-          },
-        },
-        createdAt: {
-          gte: new Date(new Date().setDate(new Date().getDate() - 365)),
-        },
-      },
-    });
-    const data: { date: Date; count: number }[] = [];
+  async getChartData(params: { userId: number; destinationId?: number }) {
+    const { userId, destinationId } = params;
+    const data: { date: string; count: number }[] = destinationId
+      ? await this.repository.getChartDataByDestination({
+          userId,
+          destinationId,
+        })
+      : await this.repository.getChartData({ userId });
+
+    const today = new Date().getTime();
     const day = 24 * 60 * 60 * 1000;
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    for (let i = 0; i < 365; i++) {
-      data.push({ date: new Date(today.getTime() - i * day), count: 0 });
+    const firstClick = new Date(data[0].date).getTime();
+    const daysSinceFirstClick = Math.floor((today - firstClick) / day);
+    const length = daysSinceFirstClick > 365 ? daysSinceFirstClick : 365;
+    const dataMap = new Map<string, { date: Date; count: number }>();
+    for (let i = 0; i < length; i++) {
+      const date = new Date(today - (length - i) * day);
+      date.setHours(0, 0, 0, 0);
+      const dateString = date.toISOString().split('T')[0];
+      dataMap.set(dateString, { date, count: 0 });
     }
-    for (const click of clicks) {
-      const date = new Date(click.createdAt);
-      const index = data.findIndex((d) => d.date.getDate() === date.getDate());
-      if (index !== -1) {
-        data[index].count++;
+
+    data.forEach((record) => {
+      const date = new Date(record.date);
+      const dateString = date.toISOString().split('T')[0];
+      if (dataMap.has(dateString)) {
+        dataMap.get(dateString).count = record.count;
       }
-    }
-    return data;
+    });
+
+    return Array.from(dataMap.values());
   }
 
   async getUnreadCount(params: { userId: number }) {

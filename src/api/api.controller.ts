@@ -96,6 +96,16 @@ export class ApiController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get('clicks/chart/:destinationId')
+  async getChartDataWithDestination(
+    @Req() req: GuardedRequest,
+    @Param('destinationId', ParseIntPipe) destinationId: number,
+  ) {
+    const { userId }: { userId: number } = req.user;
+    return this.clicksService.getChartData({ userId, destinationId });
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get('clicks/unread')
   async getUnreadCount(@Req() req: GuardedRequest) {
     const { userId }: { userId: number } = req.user;

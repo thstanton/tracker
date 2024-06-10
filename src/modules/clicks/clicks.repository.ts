@@ -35,4 +35,40 @@ export class ClicksRepository {
     const { where, data } = params;
     return this.prisma.click.updateMany({ where, data });
   }
+
+  async getChartData(params: { userId: number }) {
+    const { userId } = params;
+    const result: { date: string; count: number }[] = await this.prisma
+      .$queryRaw`
+      SELECT
+        DATE_TRUNC('day', "createdAt") as date,
+        COUNT(*) as count
+      FROM "Click"
+      INNER JOIN "Destination" ON "destinationId" = "Destination"."id"
+      WHERE "Destination"."userId" = ${userId}
+      GROUP BY date
+      ORDER BY date;
+    `;
+    return result.map(({ date, count }) => ({ date, count: Number(count) }));
+  }
+
+  async getChartDataByDestination(params: {
+    userId: number;
+    destinationId: number;
+  }) {
+    const { userId, destinationId } = params;
+    const result: { date: string; count: number }[] = await this.prisma
+      .$queryRaw`
+      SELECT
+        DATE_TRUNC('day', "createdAt") as date,
+        COUNT(*) as count
+      FROM "Click"
+      INNER JOIN "Destination" ON "destinationId" = "Destination"."id"
+      WHERE "Destination"."userId" = ${userId}
+      AND "Destination"."id" = ${destinationId}
+      GROUP BY date
+      ORDER BY date;
+    `;
+    return result.map(({ date, count }) => ({ date, count: Number(count) }));
+  }
 }
