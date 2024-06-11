@@ -78,7 +78,7 @@ export class ClicksService {
     const length = daysSinceFirstClick > 365 ? daysSinceFirstClick : 365;
     const dataMap = new Map<string, { date: Date; count: number }>();
     for (let i = 0; i < length; i++) {
-      const date = new Date(today - (length - i) * day);
+      const date = new Date(today - (length - i - 1) * day);
       date.setHours(0, 0, 0, 0);
       const dateString = date.toISOString().split('T')[0];
       dataMap.set(dateString, { date, count: 0 });
